@@ -23,6 +23,8 @@ def load_data(datadir):
 
     # separate folder for each letter
     for folder in folders:
+
+        print("Loading images from folder ", folder, " has started.")
         for image in os.listdir(datadir + '/' + folder):
 
             img = imread(datadir + '/' + folder + '/' + image)
