@@ -1,17 +1,16 @@
 import numpy as np
-import pandas as pd
 import os
 
-import cv2
-
-from keras.models import Sequential, load_model
-from keras.layers import Dense, Dropout, Conv2D, MaxPool2D, Flatten
-from keras.utils import to_categorical
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import Dense, Dropout, Conv2D, MaxPool2D, Flatten
+from tensorflow.python.keras.utils.np_utils import to_categorical
 from skimage.transform import resize
 from skimage.io import imread
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
+
+#decided not to utilize!
 
 imgdir = 'C:/Users/soyon/Documents/Codes/ASL-Translator/dataset/train'
 letters = sorted(os.listdir(imgdir))
@@ -46,7 +45,7 @@ def load_data(datadir):
     target = np.array(target)
     print("Shape before one-hot encoding: ", target.shape)
     target_one_hot = to_categorical(target, len(folders))
-    print("Shape after one-hot encoding: ", target.shape)
+    print("Shape after one-hot encoding: ", target_one_hot.shape)
 
     return images, target, target_one_hot
 
@@ -55,8 +54,8 @@ class CNN:
 
     model = None
 
-    def __init__(self, type):
-        self.model = type
+    def __init__(self, model_type):
+        self.model = model_type
 
     def create_model(self):
 
@@ -86,8 +85,9 @@ class CNN:
 
         return self.model
 
-    def predict(self, classes, classifier, img):
-        to_return = classifier.predict(img)
+    def predict(self, classes, img):
+        class_pred = self.model.predict(img)
+        return classes[np.argmax(class_pred)], class_pred
 
 
 if __name__ == '__main__':
@@ -97,10 +97,15 @@ if __name__ == '__main__':
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=77)
 
-    model = CNN(Sequential).model
-    model = CNN.create_model()
+    # create the model
+    model = CNN(Sequential())
+    model = CNN.create_model(model)
 
-    y_pred = model.predict(y_labels, Sequential, X_test)
+    # train the model
+    model.fit()
+
+    # predict using the model
+    label_pred, y_pred = model.predict(y_labels, Sequential, X_test)
     print("Done predicting!")
 
     print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
