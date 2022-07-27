@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 
-#decided not to utilize!
+# decided not to utilize!
 
 imgdir = 'C:/Users/soyon/Documents/Codes/ASL-Translator/dataset/train'
 letters = sorted(os.listdir(imgdir))
