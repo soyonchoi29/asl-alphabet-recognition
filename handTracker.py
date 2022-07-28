@@ -140,7 +140,7 @@ class HandTracker:
             return cropped
 
         else:
-            return None
+            return np.array(0)
 
     def display_letters(self, img, index, letter, prob):
 

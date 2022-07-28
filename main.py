@@ -63,6 +63,7 @@ if __name__ == '__main__':
 
     while True:
         success, image = cap.read()
+        image = cv2.flip(image, 1)
         image = tracker.find_hands(image, draw=False)
         tracker.draw_borders(image)
 
