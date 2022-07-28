@@ -19,17 +19,16 @@ letters = sorted(os.listdir(imgdir))
 
 class Data:
 
-    X, y = None, None
-    X_pca = None
-
     def __init__(self):
         self.X, self.y = [], []
+        self.labels = []
         self.X_pca = []
 
     def load_data(self, datadir):
         index = 0
 
         folders = sorted(os.listdir(datadir))
+        self.labels = folders
         # print(folders)
 
         # separate folder for each letter
@@ -58,6 +57,9 @@ class Data:
         self.y = np.array(self.y)
 
         return self.X, self.y
+
+    def get_label(self, index):
+        return self.labels[index]
 
     def eigenvalues(self):
 
@@ -95,10 +97,8 @@ class Data:
 
 class SVM:
 
-    model = None
-
     def __init__(self):
-        self.model = svm.SVC()
+        self.model = None
 
     def fit(self, dataset, target):
 
@@ -112,7 +112,7 @@ class SVM:
         # self.model = grid
         # return self.model
 
-        svc = svm.SVC(C=100, gamma=0.0001, kernel='rbf')
+        svc = svm.SVC(C=100, gamma=0.0001, kernel='rbf', probability=True)
         fit = svc.fit(dataset, target)
         self.model = fit
 
@@ -128,6 +128,8 @@ class SVM:
         return self.model
 
 
+"""
+    
 if __name__ == '__main__':
 
     data = Data()
@@ -166,4 +168,5 @@ if __name__ == '__main__':
 
     y_pred = fitted_model.predict(X_test)
     print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
-
+    
+"""

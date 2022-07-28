@@ -1,16 +1,17 @@
 import numpy as np
-import pandas as pd
 
 import cv2
-import time
 import mediapipe as mp
+import matplotlib.pyplot as plt
 
-import svm
+from skimage.transform import resize
+from skimage.color import rgb2gray
 
 
 class HandTracker:
 
     def __init__(self, mode=False, max_hands=2, detection_con=0.5, model_complexity=1, track_con=0.5):
+        self.borders = None
         self.results = None
         self.mode = mode
         self.maxHands = max_hands
@@ -55,6 +56,8 @@ class HandTracker:
 
     def draw_borders(self, img):
 
+        border_params = []
+
         if self.results.multi_hand_landmarks:
             for i in range(len(self.results.multi_hand_landmarks)):
                 hand = self.results.multi_hand_landmarks[i]
@@ -78,11 +81,39 @@ class HandTracker:
                 min_y = min(ylist) - 20
                 max_y = max(ylist) + 20
 
-                rect_w = max_x - min_x
-                rect_h = max_y - min_y
+                # rect_w = max_x - min_x
+                # rect_h = max_y - min_y
 
                 cv2.rectangle(img,
                               (min_x, min_y),
-                              (min_x + rect_w, min_y + rect_h),
+                              (max_x, max_y),
                               (0, 0, 255),
                               2)
+
+                border_params.append([min_x, max_x, min_y, max_y])
+
+        border_params = np.array(border_params)
+        # print(np.shape(border_params))
+        self.borders = border_params
+        return self.borders
+
+    def slice_hand_imgs(self, img, index):
+
+        hand_img = img[(self.borders[index, 2]-30):(self.borders[index, 3]+30), (self.borders[index, 0]-30):(self.borders[index, 1]+30)]
+        hand_img = resize(hand_img, (64, 64))
+        hand_img = rgb2gray(hand_img)
+        hand_img /= 255
+        hand_img = hand_img.flatten()
+        hand_img = hand_img.reshape(1, -1)
+
+        # plt.imshow(hand_img.reshape(64, 64), cmap='gray')
+        # plt.show()
+
+        return hand_img
+
+    def display_letters(self, img, index, letter, prob):
+
+        x, y = self.borders[index, 0], self.borders[index, 2]
+        cv2.putText(img, '{}: {}%'.format(letter, prob), (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
+
+
