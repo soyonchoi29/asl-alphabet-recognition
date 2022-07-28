@@ -39,7 +39,7 @@ class Data:
 
             for image in os.listdir(datadir + '/' + folder):
 
-                if (imgind > 50):
+                if (imgind > 200):
                     break
 
                 img = imread(datadir + '/' + folder + '/' + image)
@@ -127,8 +127,6 @@ class SVM:
 
         return self.model
 
-
-"""
     
 if __name__ == '__main__':
 
@@ -168,5 +166,4 @@ if __name__ == '__main__':
 
     y_pred = fitted_model.predict(X_test)
     print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
-    
-"""
+
