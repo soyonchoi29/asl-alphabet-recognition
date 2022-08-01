@@ -63,13 +63,13 @@ if __name__ == '__main__':
 
     while True:
         success, image = cap.read()
-        image = cv2.flip(image, 1)
-        image = tracker.find_hands(image, draw=False)
-        tracker.draw_borders(image)
+        frame = cv2.flip(image, 1)
+        frame = tracker.find_hands(frame)
+        tracker.draw_borders(frame)
 
         if tracker.results.multi_hand_landmarks:
             for i in range(len(tracker.results.multi_hand_landmarks)):
-                img = tracker.slice_hand_imgs(image, i)
+                img = tracker.slice_hand_imgs(cv2.flip(image, 1), i)
                 # print(img)
 
                 if img.any() >= 1:
@@ -83,7 +83,7 @@ if __name__ == '__main__':
                         # plt.imshow(img.reshape(64, 64), cmap='gray')
                         # plt.show()
 
-                        tracker.display_letters(image, i, predicted_letter, round(probability, 2))
+                        tracker.display_letters(frame, i, predicted_letter, round(probability, 2))
 
-        cv2.imshow("Signed English Translator", image)
+        cv2.imshow("Signed English Translator", frame)
         cv2.waitKey(1)

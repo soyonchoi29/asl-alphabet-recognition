@@ -38,20 +38,18 @@ class HandTracker:
 
         return img
 
-    def find_positions(self, img, hand_num=0, draw=True):
+    def find_positions(self, img):
 
         lmlist = []
 
         if self.results.multi_hand_landmarks:
-            hand = self.results.multi_hand_landmarks[hand_num]
-            for finger_id, lm in enumerate(hand.landmark):
-                h, w, c = img.shape
-                cx, cy = int(lm.x * w), int(lm.y * h)
-                lmlist.append([finger_id, cx, cy])
+            for hand in range(len(self.results.multi_hand_landmarks)):
+                for finger_id, lm in enumerate(self.results.multi_hand_landmarks[hand].landmark):
+                    h, w, c = img.shape
+                    cx, cy = int(lm.x * w), int(lm.y * h)
+                    lmlist.append([hand, finger_id, cx, cy])
 
-            if draw:
-                cv2.circle(img, (cx, cy), 3, (255, 0, 255), cv2.FILLED)
-
+        lmlist = np.array(lmlist)
         return lmlist
 
     # def draw_borders(self, img):
@@ -104,15 +102,15 @@ class HandTracker:
                 center = np.array([np.mean(x) * image_width, np.mean(y) * image_height]).astype('int32')
                 rect_centers.append(center)
                 cv2.rectangle(img,
-                              (center[0] - 90, center[1] - 90),
-                              (center[0] + 90, center[1] + 90),
+                              (center[0] - 120, center[1] - 120),
+                              (center[0] + 120, center[1] + 120),
                               (0, 0, 255), 2)
 
                 center = np.array([np.mean(x) * image_width, np.mean(y) * image_height]).astype('int32')
                 rect_centers.append(center)
                 cv2.rectangle(img,
-                              (center[0] - 90, center[1] - 90),
-                              (center[0] + 90, center[1] + 90),
+                              (center[0] - 120, center[1] - 120),
+                              (center[0] + 120, center[1] + 120),
                               (0, 0, 255), 2)
 
         rect_centers = np.array(rect_centers)
@@ -124,8 +122,9 @@ class HandTracker:
     def slice_hand_imgs(self, img, index):
 
         cropped = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        cropped = cropped[(self.centers[index, 1] - 90):(self.centers[index, 1] + 90),
-                          (self.centers[index, 0] - 90):(self.centers[index, 0] + 90)]
+        cropped = cropped[(self.centers[index, 1] - 120):(self.centers[index, 1] + 120),
+                          (self.centers[index, 0] - 120):(self.centers[index, 0] + 120)]
+
         if np.shape(cropped)[0] >= 64 and np.shape(cropped)[1] >= 64:
             cropped = resize(cropped, (64, 64))
             cropped = rgb2gray(cropped)
