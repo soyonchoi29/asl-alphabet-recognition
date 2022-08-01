@@ -47,7 +47,7 @@ class Data:
 
                 # imgind += 1
                 # print(imgind)
-
+                #
                 # if imgind <= 1300:
                 #     continue
                 # elif imgind >= 1600:
@@ -89,25 +89,6 @@ class Data:
 
         return self.X, self.y
 
-    # def numerize(self):
-    #
-    #     dataset = []
-    #     tracker = handTracker.HandTracker()
-    #
-    #     for img in self.X:
-    #         tracker.find_hands(img)
-    #         lmlist = tracker.find_positions(img)
-    #         xlist = lmlist[:, 2]
-    #         ylist = lmlist[:, 3]
-    #         xylist = np.stack(xlist, ylist)
-    #         xylist = xylist.flatten()
-    #         dataset.append(xylist)
-    #
-    #     dataset = np.array(dataset)
-    #     self.X = dataset
-    #
-    #     return self.X
-
     def eigenvalues(self):
 
         scaler = StandardScaler()
@@ -136,12 +117,18 @@ class Data:
 
         self.pca = decomposition.PCA(n_components=d)
         self.X_pca = self.pca.fit_transform(self.X)
-        self.X_pca = self.pca.inverse_transform(self.X_pca)
+        # self.X_pca = self.pca.inverse_transform(self.X_pca)
 
         return self.X_pca
 
     def save_pca(self, path):
         pickle.dump(self.pca, open(path, 'wb'))
+
+    def load_pca(self, path):
+        loaded_pca = pickle.load(open(path, 'rb'))
+        self.pca = loaded_pca
+
+        return self.pca
 
 
 class SVM:
@@ -151,21 +138,21 @@ class SVM:
 
     def fit(self, dataset, target):
 
-        param_grid = {'C': [0.1, 1, 10, 100],
-                      'gamma': [0.0001, 0.001, 0.01, 0.1, 1],
-                      'kernel': ['rbf', 'poly']}
-
-        grid = GridSearchCV(self.model, param_grid)
-        grid.fit(dataset, target)
-
-        self.model = grid
-        return self.model
-
-        # svc = svm.SVC(C=100, gamma=0.0001, kernel='rbf', probability=True)
-        # fit = svc.fit(dataset, target)
-        # self.model = fit
+        # param_grid = {'C': [0.1, 1, 10, 100],
+        #               'gamma': [0.0001, 0.001, 0.01, 0.1, 1],
+        #               'kernel': ['rbf', 'poly']}
         #
+        # grid = GridSearchCV(self.model, param_grid)
+        # grid.fit(dataset, target)
+        #
+        # self.model = grid
         # return self.model
+
+        svc = svm.SVC(C=100, gamma=0.1, kernel='rbf', probability=True)
+        fit = svc.fit(dataset, target)
+        self.model = fit
+
+        return self.model
 
     def save_model(self, path):
         pickle.dump(self.model, open(path, 'wb'))
@@ -183,28 +170,13 @@ if __name__ == '__main__':
     X, y = data.load_data(imgdir)
     print("Done loading data!")
 
-
     # run pca
     data.eigenvalues()
 
-    comp_num = 8
+    comp_num = 6
     X_pca = data.do_pca(comp_num)
     print(np.shape(X_pca))
     data.save_pca('pca_{}.sav'.format(comp_num))
-
-    # display images as plots
-    # fig, axes = plt.subplots(2, 10, figsize=(10, 6))
-    # ax = axes.ravel()
-    #
-    # for i in range(10):
-    #     to_show = X[i].reshape(64, 64)
-    #     ax[i].imshow(to_show, cmap='gray')
-    # for i in range(10):
-    #     to_show = X_pca[i].reshape(64, 64)
-    #     ax[i+10].imshow(to_show, cmap='gray')
-    #
-    # fig.tight_layout()
-    # plt.show()
 
     X_train, X_test, y_train, y_test = train_test_split(X_pca, y, test_size=0.2, random_state=77)
     print("Split data successfully")
@@ -213,9 +185,9 @@ if __name__ == '__main__':
     print("Fitting data to model...")
     fitted_model = model.fit(X_train, y_train)
     print("Done fitting!")
-    print("Best parameters: ", fitted_model.best_params_)
+    # print("Best parameters: ", fitted_model.best_params_)
 
-    model.save_model('svm_model.sav')
+    model.save_model('svm_model_pca_only.sav')
 
     y_pred = fitted_model.predict(X_test)
     print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
