@@ -22,6 +22,7 @@ class Data:
     def __init__(self):
         self.X, self.y = [], []
         self.labels = []
+        self.pca = None
         self.X_pca = []
 
     def load_data(self, datadir):
@@ -66,14 +67,12 @@ class Data:
         scaler = StandardScaler()
         self.X = scaler.fit_transform(self.X)
 
-        pca = decomposition.PCA()
         C = np.cov(self.X, rowvar=False)
 
         eigenval, eigenvec = np.linalg.eig(C)
         eigens = np.insert(eigenvec.transpose(), 0, np.abs(eigenval), axis=1)
         eigens_sorted = eigens[eigens[:, 0].argsort()][::-1]
         sorted_evals = eigens_sorted[:, 0]
-        print(sorted_evals)
         indices = np.arange(1, len(sorted_evals) + 1, 1, dtype=int)
 
         plt.plot(indices, sorted_evals, '-r', label="Eigens")
@@ -88,11 +87,20 @@ class Data:
         scaler = StandardScaler()
         self.X = scaler.fit_transform(self.X)
 
-        pca = decomposition.PCA(n_components=d)
-        self.X_pca = pca.fit_transform(self.X)
-        self.X_pca = pca.inverse_transform(self.X_pca)
+        self.pca = decomposition.PCA(n_components=d)
+
+        self.X_pca = self.pca.fit_transform(self.X)
+        self.X_pca = self.pca.inverse_transform(self.X_pca)
 
         return self.X_pca
+
+    def plot_component(self, comp):
+        if comp <= len(self.pca.components_):
+            mat_data = np.asmatrix(self.pca.components_[comp]).reshape(64, 64)  # reshape images
+            plt.imshow(mat_data, cmap='gray')  # plot the data
+            plt.xticks([])  # removes numbered labels on x-axis
+            plt.yticks([])  # removes numbered labels on y-axis
+            plt.title('Component {}'.format(comp))
 
 
 class SVM:
@@ -127,7 +135,7 @@ class SVM:
 
         return self.model
 
-    
+
 if __name__ == '__main__':
 
     data = Data()
@@ -138,6 +146,10 @@ if __name__ == '__main__':
     data.eigenvalues()
     X_pca = data.do_pca(30)
     print(np.shape(X_pca))
+
+    for i in range(30):
+        data.plot_component(i)
+        plt.show()
 
     # display images as plots
     fig, axes = plt.subplots(2, 10, figsize=(10, 6))
@@ -166,4 +178,3 @@ if __name__ == '__main__':
 
     y_pred = fitted_model.predict(X_test)
     print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
-
