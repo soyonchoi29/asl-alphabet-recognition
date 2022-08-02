@@ -8,7 +8,7 @@ import time
 from sklearn import decomposition
 from sklearn.preprocessing import StandardScaler
 
-import svm
+import svm2
 import handTracker
 
 
@@ -20,46 +20,10 @@ if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
     tracker = handTracker.HandTracker()
 
-    # pTime = 0
-    # cTime = 0
-
-    model = svm.SVM()
-    loaded_model = model.load_model('svm_model.sav')
-
-    # while True:
-    #     success, image = cap.read()
-    #     image = cv2.flip(image, 1)
-    #     image = tracker.find_hands(image)
-    #
-    #     # cTime = time.time()
-    #     # fps = 1 / (cTime - pTime)
-    #     # pTime = cTime
-    #     #
-    #     # cv2.putText(image, f'FPS:{int(fps)}', (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-    #
-    #     if tracker.results.multi_hand_landmarks:
-    #
-    #         crops = tracker.draw_borders(image)
-    #         if len(crops) > 0:
-    #             plt.imshow(resize(crops[0], (64, 64)), cmap='gray')
-    #             plt.show
-    #             predicted_indices = loaded_model.predict(crops)
-    #         # print(predicted_indices)
-    #
-    #             for i in range(len(predicted_indices)):
-    #
-    #                 try:
-    #                     print("trying")
-    #                     predicted_letter = letters[int(predicted_indices(i))]
-    #                     cv2.putText(image, predicted_letter,
-    #                     (tracker.centers[i, 0]-128, tracker.centers[i, 1]-128),
-    #                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
-    #
-    #                 except:
-    #                     pass
-    #
-    #     cv2.imshow("Signed English Translator", image)
-    #     cv2.waitKey(1)
+    model = svm2.SVM()
+    pca = svm2.Data()
+    loaded_model = model.load_model('svm_model_pca_only.sav')
+    loaded_pca = pca.load_pca('pca_6.sav')
 
     while True:
         success, image = cap.read()
@@ -68,22 +32,41 @@ if __name__ == '__main__':
         tracker.draw_borders(frame)
 
         if tracker.results.multi_hand_landmarks:
+
+            lmlist = tracker.find_positions(frame)
+            # print(lmlist)
+            xlist = np.array(lmlist[:, 2])
+            # print(xlist)
+            ylist = np.array(lmlist[:, 3])
+            # print(ylist)
+
+            # xylist = []
+            # for cx in xlist:
+            #     xylist.append(cx)
+            # for cy in ylist:
+            #     xylist.append(cy)
+
+            xylist = np.stack([xlist, ylist])
+
             for i in range(len(tracker.results.multi_hand_landmarks)):
-                img = tracker.slice_hand_imgs(cv2.flip(image, 1), i)
-                # print(img)
 
-                if img.any() >= 1:
+                pos = xylist[:, i*21:(i+1)*21].flatten()
+                pos = pos.reshape(1, -1)
 
-                    predicted_letter = loaded_model.predict(img)
-                    predicted_letter = letters[int(predicted_letter)]
-                    probability = np.ravel(loaded_model.predict_proba(img))
-                    probability = max(probability) * 100
+                pos_pca = loaded_pca.transform(pos)
+                # pos_pca = loaded_pca.inverse_transform(pos_pca)
 
-                    if probability >= 60:
-                        # plt.imshow(img.reshape(64, 64), cmap='gray')
-                        # plt.show()
+                predicted_letter = loaded_model.predict(pos_pca)
+                predicted_letter = letters[int(predicted_letter)]
+                print(predicted_letter)
 
-                        tracker.display_letters(frame, i, predicted_letter, round(probability, 2))
+                probability = np.ravel(loaded_model.predict_proba(pos_pca))
+                # print(probability)
+                probability = max(probability) * 100
+                print(probability)
+
+                if probability >= 60:
+                    tracker.display_letters(frame, i, predicted_letter, round(probability, 2))
 
         cv2.imshow("Signed English Translator", frame)
         cv2.waitKey(1)

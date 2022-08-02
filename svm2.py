@@ -46,7 +46,7 @@ class Data:
             for image in os.listdir(datadir + '/' + folder):
 
                 # imgind += 1
-                # print(imgind)
+                # # print(imgind)
                 #
                 # if imgind <= 1300:
                 #     continue
@@ -148,7 +148,7 @@ class SVM:
         # self.model = grid
         # return self.model
 
-        svc = svm.SVC(C=100, gamma=0.1, kernel='rbf', probability=True)
+        svc = svm.SVC(C=10, gamma=0.1, kernel='rbf', probability=True)
         fit = svc.fit(dataset, target)
         self.model = fit
 
@@ -176,18 +176,18 @@ if __name__ == '__main__':
     comp_num = 6
     X_pca = data.do_pca(comp_num)
     print(np.shape(X_pca))
-    data.save_pca('pca_{}.sav'.format(comp_num))
+    data.save_pca('pca_{}_world.sav'.format(comp_num))
 
-    X_train, X_test, y_train, y_test = train_test_split(X_pca, y, test_size=0.2, random_state=77)
-    print("Split data successfully")
+    # X_train, X_test, y_train, y_test = train_test_split(X_pca, y, test_size=0.2, random_state=77)
+    # print("Split data successfully")
 
     model = SVM()
     print("Fitting data to model...")
-    fitted_model = model.fit(X_train, y_train)
+    fitted_model = model.fit(X_pca, y)
     print("Done fitting!")
     # print("Best parameters: ", fitted_model.best_params_)
 
-    model.save_model('svm_model_pca_only.sav')
+    model.save_model('svm_model_pca_only_world.sav')
 
-    y_pred = fitted_model.predict(X_test)
-    print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
+    # y_pred = fitted_model.predict(X_test)
+    # print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
