@@ -47,7 +47,7 @@ class HandTracker:
                 for finger_id, lm in enumerate(self.results.multi_hand_world_landmarks[hand].landmark):
                     # h, w = img.shape
                     # cx, cy = int(lm.x * w), int(lm.y * h)
-                    lmlist.append([hand, finger_id, lm.x, lm.y])
+                    lmlist.append([hand, finger_id, lm.x, lm.x, lm.z])
 
         lmlist = np.array(lmlist)
         return lmlist
