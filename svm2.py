@@ -12,6 +12,7 @@ from sklearn.preprocessing import StandardScaler
 import cv2
 import pickle
 import os
+import csv
 
 import handTracker
 
@@ -32,6 +33,7 @@ class Data:
         index = 0
 
         folders = sorted(os.listdir(datadir))
+        images = []
         self.labels = folders
         # print(folders)
 
@@ -80,12 +82,18 @@ class Data:
                     # self.X.append(img.flatten())
                     self.X.append(xylist)
                     self.y.append(index)
+                    images.append(image)
 
             index += 1
 
         self.X = np.array(self.X)
         print(self.X)
         self.y = np.array(self.y)
+
+        # with open('collected_coordinates.csv', 'w') as file:
+        #     writer = csv.writer(file)
+        #     for i in range(len(images)):
+        #         writer.writerow([images[i], self.X[i]])
 
         return self.X, self.y
 
@@ -171,23 +179,23 @@ if __name__ == '__main__':
     print("Done loading data!")
 
     # run pca
-    data.eigenvalues()
+    # data.eigenvalues()
 
-    comp_num = 6
-    X_pca = data.do_pca(comp_num)
-    print(np.shape(X_pca))
-    data.save_pca('pca_{}_world.sav'.format(comp_num))
+    # comp_num = 6
+    # X_pca = data.do_pca(comp_num)
+    # print(np.shape(X_pca))
+    # data.save_pca('pca_{}_world.sav'.format(comp_num))
 
-    # X_train, X_test, y_train, y_test = train_test_split(X_pca, y, test_size=0.2, random_state=77)
-    # print("Split data successfully")
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=77)
+    print("Split data successfully")
 
     model = SVM()
     print("Fitting data to model...")
-    fitted_model = model.fit(X_pca, y)
+    fitted_model = model.fit(X_train, y)
     print("Done fitting!")
     # print("Best parameters: ", fitted_model.best_params_)
 
     model.save_model('svm_model_pca_only_world.sav')
 
-    # y_pred = fitted_model.predict(X_test)
-    # print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
+    y_pred = fitted_model.predict(X_test)
+    print("Accuracy: ", accuracy_score(y_pred, y_test)*100)

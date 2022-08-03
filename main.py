@@ -51,6 +51,7 @@ if __name__ == '__main__':
             for i in range(len(tracker.results.multi_hand_landmarks)):
 
                 pos = xylist[:, i*21:(i+1)*21].flatten()
+                print(pos)
                 pos = pos.reshape(1, -1)
 
                 pos_pca = loaded_pca.transform(pos)
