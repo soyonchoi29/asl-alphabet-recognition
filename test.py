@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
     model = svm2.SVM()
     pca = svm2.Data()
-    loaded_model = model.load_model('svm_model_no_pca_world_grid_w_z_coord.sav')
+    loaded_model = model.load_model('svm_model_no_pca_world_grid.sav')
     # loaded_pca = pca.load_pca('pca_6_world.sav')
 
     lmlist = tracker.find_positions(img)
@@ -33,18 +33,15 @@ if __name__ == '__main__':
     # print(xlist)
     ylist = np.array(lmlist[:, 3])
     # print(ylist)
-    zlist = np.array(lmlist[:, 4])
 
-    xyzlist = []
+    xylist = []
     for cx in xlist:
-        xyzlist.append(cx)
+        xylist.append(cx)
     for cy in ylist:
-        xyzlist.append(cy)
-    for cz in zlist:
-        xyzlist.append(cz)
+        xylist.append(cy)
 
-    print(xyzlist)
-    pos = np.array(xyzlist)
+    print(xylist)
+    pos = np.array(xylist)
     pos = pos.reshape(1, -1)
 
     # pos_pca = loaded_pca.transform(pos)

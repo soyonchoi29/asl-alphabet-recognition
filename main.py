@@ -21,7 +21,9 @@ if __name__ == '__main__':
     tracker = handTracker.HandTracker()
 
     model = svm2.SVM()
-    loaded_model = model.load_model('svm_model_no_pca_world_grid_w_z_coord.sav')
+    pca = svm2.Data()
+    loaded_model = model.load_model('svm_model_no_pca_world.sav')
+    # loaded_pca = pca.load_pca('pca_6.sav')
 
     while True:
         success, image = cap.read()
@@ -37,19 +39,18 @@ if __name__ == '__main__':
             # print(xlist)
             ylist = np.array(lmlist[:, 3])
             # print(ylist)
-            zlist = np.array(lmlist[:, 4])
 
-            xyzlist = []
-            for cx in xlist:
-                xyzlist.append(cx)
-            for cy in ylist:
-                xyzlist.append(cy)
-            for cz in zlist:
-                xyzlist.append(cz)
+            # xylist = []
+            # for cx in xlist:
+            #     xylist.append(cx)
+            # for cy in ylist:
+            #     xylist.append(cy)
+
+            xylist = np.stack([xlist, ylist])
 
             for i in range(len(tracker.results.multi_hand_landmarks)):
 
-                pos = np.array(xyzlist[i*(21*3):(i+1)*(21*3)])
+                pos = xylist[:, i*21:(i+1)*21].flatten()
                 print(pos)
                 pos = pos.reshape(1, -1)
 

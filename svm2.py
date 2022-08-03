@@ -66,15 +66,12 @@ class Data:
                     # print(xlist)
                     ylist = np.array(lmlist[:, 3])
                     # print(ylist)
-                    zlist = np.array(lmlist[:, 4])
 
-                    xyzlist = []
+                    xylist = []
                     for cx in xlist:
-                        xyzlist.append(cx)
+                        xylist.append(cx)
                     for cy in ylist:
-                        xyzlist.append(cy)
-                    for cz in zlist:
-                        xyzlist.append(cz)
+                        xylist.append(cy)
 
                     # print(xylist)
                     # print(len(xylist))
@@ -83,7 +80,7 @@ class Data:
                     # img = rgb2gray(img)
                     # img /= 255
                     # self.X.append(img.flatten())
-                    self.X.append(xyzlist)
+                    self.X.append(xylist)
                     self.y.append(index)
                     images.append('{}'.format(image))
 
@@ -199,7 +196,7 @@ if __name__ == '__main__':
     print("Done fitting!")
     # print("Best parameters: ", fitted_model.best_params_)
 
-    model.save_model('svm_model_no_pca_world_grid_w_z_coord.sav')
+    model.save_model('svm_model_no_pca_world_grid.sav')
 
     y_pred = fitted_model.predict(X_test)
     print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
