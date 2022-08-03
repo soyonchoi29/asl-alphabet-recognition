@@ -82,18 +82,19 @@ class Data:
                     # self.X.append(img.flatten())
                     self.X.append(xylist)
                     self.y.append(index)
-                    images.append(image)
+                    images.append('{}'.format(image))
 
             index += 1
 
         self.X = np.array(self.X)
-        print(self.X)
+        # print(np.shape(self.X))
         self.y = np.array(self.y)
+        # print(np.shape(self.y))
 
-        # with open('collected_coordinates.csv', 'w') as file:
+        # with open('collected_coordinates_ver2.csv', 'w') as file:
         #     writer = csv.writer(file)
         #     for i in range(len(images)):
-        #         writer.writerow([images[i], self.X[i]])
+        #         writer.writerow([images[i], self.X[i], self.y[i]])
 
         return self.X, self.y
 
@@ -156,7 +157,7 @@ class SVM:
         # self.model = grid
         # return self.model
 
-        svc = svm.SVC(C=10, gamma=0.1, kernel='rbf', probability=True)
+        svc = svm.SVC(C=100, gamma=1, kernel='rbf', probability=True)
         fit = svc.fit(dataset, target)
         self.model = fit
 
@@ -191,11 +192,11 @@ if __name__ == '__main__':
 
     model = SVM()
     print("Fitting data to model...")
-    fitted_model = model.fit(X_train, y)
+    fitted_model = model.fit(X_train, y_train)
     print("Done fitting!")
     # print("Best parameters: ", fitted_model.best_params_)
 
-    model.save_model('svm_model_pca_only_world.sav')
+    model.save_model('svm_model_no_pca_world_grid.sav')
 
     y_pred = fitted_model.predict(X_test)
     print("Accuracy: ", accuracy_score(y_pred, y_test)*100)

@@ -22,8 +22,8 @@ if __name__ == '__main__':
 
     model = svm2.SVM()
     pca = svm2.Data()
-    loaded_model = model.load_model('svm_model_pca_only.sav')
-    loaded_pca = pca.load_pca('pca_6.sav')
+    loaded_model = model.load_model('svm_model_no_pca_world.sav')
+    # loaded_pca = pca.load_pca('pca_6.sav')
 
     while True:
         success, image = cap.read()
@@ -54,14 +54,14 @@ if __name__ == '__main__':
                 print(pos)
                 pos = pos.reshape(1, -1)
 
-                pos_pca = loaded_pca.transform(pos)
+                # pos_pca = loaded_pca.transform(pos)
                 # pos_pca = loaded_pca.inverse_transform(pos_pca)
 
-                predicted_letter = loaded_model.predict(pos_pca)
+                predicted_letter = loaded_model.predict(pos)
                 predicted_letter = letters[int(predicted_letter)]
                 print(predicted_letter)
 
-                probability = np.ravel(loaded_model.predict_proba(pos_pca))
+                probability = np.ravel(loaded_model.predict_proba(pos))
                 # print(probability)
                 probability = max(probability) * 100
                 print(probability)
