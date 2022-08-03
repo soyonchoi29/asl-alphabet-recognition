@@ -22,35 +22,43 @@ if __name__ == '__main__':
 
     model = svm2.SVM()
     pca = svm2.Data()
-    loaded_model = model.load_model('svm_model_no_pca_world.sav')
+    loaded_model = model.load_model('svm_model_no_pca_world_grid.sav')
     # loaded_pca = pca.load_pca('pca_6.sav')
 
     while True:
         success, image = cap.read()
         frame = cv2.flip(image, 1)
+
+        if not success:
+            break
+
         frame = tracker.find_hands(frame)
         tracker.draw_borders(frame)
 
         if tracker.results.multi_hand_landmarks:
 
-            lmlist = tracker.find_positions(frame)
+            # cropped = tracker.slice_hand_imgs(cv2.flip(image, 1), 0)
+            # plt.imshow(cropped)
+            # plt.show()
+
+            lmlist = tracker.find_positions(cv2.flip(image, 1))
             # print(lmlist)
             xlist = np.array(lmlist[:, 2])
             # print(xlist)
             ylist = np.array(lmlist[:, 3])
             # print(ylist)
 
-            # xylist = []
-            # for cx in xlist:
-            #     xylist.append(cx)
-            # for cy in ylist:
-            #     xylist.append(cy)
+            xylist = []
+            for cx in xlist:
+                xylist.append(cx)
+            for cy in ylist:
+                xylist.append(cy)
 
-            xylist = np.stack([xlist, ylist])
+            # xylist = np.stack([xlist, ylist])
 
             for i in range(len(tracker.results.multi_hand_landmarks)):
 
-                pos = xylist[:, i*21:(i+1)*21].flatten()
+                pos = np.array(xylist[i*(21*2):(i+1)*(21*2)])
                 print(pos)
                 pos = pos.reshape(1, -1)
 
@@ -64,7 +72,7 @@ if __name__ == '__main__':
                 probability = np.ravel(loaded_model.predict_proba(pos))
                 # print(probability)
                 probability = max(probability) * 100
-                print(probability)
+                print('confidence:', probability)
 
                 if probability >= 60:
                     tracker.display_letters(frame, i, predicted_letter, round(probability, 2))

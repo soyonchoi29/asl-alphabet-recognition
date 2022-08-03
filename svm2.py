@@ -38,6 +38,8 @@ class Data:
         # print(folders)
 
         tracker = handTracker.HandTracker(max_hands=1)
+        file = open('collected_coordinates_ver2.csv', 'w')
+        writer = csv.writer(file)
 
         # separate folder for each letter
         for folder in folders:
@@ -62,6 +64,13 @@ class Data:
                 if tracker.results.multi_hand_landmarks:
                     lmlist = tracker.find_positions(img)
                     # print(lmlist)
+
+                    for i in range(len(lmlist)):
+                        writer.writerow([image,
+                                         'finger_id = {}'.format(lmlist[i, 1]),
+                                         (lmlist[i, 2], lmlist[i, 3]),
+                                         'Class = {}'.format(index)])
+
                     xlist = np.array(lmlist[:, 2])
                     # print(xlist)
                     ylist = np.array(lmlist[:, 3])
@@ -90,11 +99,6 @@ class Data:
         # print(np.shape(self.X))
         self.y = np.array(self.y)
         # print(np.shape(self.y))
-
-        # with open('collected_coordinates_ver2.csv', 'w') as file:
-        #     writer = csv.writer(file)
-        #     for i in range(len(images)):
-        #         writer.writerow([images[i], self.X[i], self.y[i]])
 
         return self.X, self.y
 
@@ -196,7 +200,7 @@ if __name__ == '__main__':
     print("Done fitting!")
     # print("Best parameters: ", fitted_model.best_params_)
 
-    model.save_model('svm_model_no_pca_world_grid.sav')
+    # model.save_model('svm_model_no_pca_world_grid.sav')
 
     y_pred = fitted_model.predict(X_test)
     print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
