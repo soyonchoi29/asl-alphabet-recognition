@@ -54,7 +54,7 @@ class Data:
 
                 if imgind <= 1300:
                     continue
-                elif imgind >= 1600:
+                elif imgind >= 1320:
                     break
 
                 img = imread(datadir + '/' + folder + '/' + image)
@@ -186,12 +186,12 @@ if __name__ == '__main__':
     # run pca
     # data.eigenvalues()
 
-    comp_num = 2
+    comp_num = 3
     X_pca = data.do_pca(comp_num)
     print(np.shape(X_pca))
     # data.save_pca('pca_{}_world.sav'.format(comp_num))
 
-    pickle.dump(X_pca, open('X_pca_kaggle.sav', 'wb'))
+    pickle.dump(X_pca, open('X_pca_3_kaggle.sav', 'wb'))
     pickle.dump(y, open('y_kaggle.sav', 'wb'))
     print("Saved X_pca!")
 

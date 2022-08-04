@@ -188,13 +188,13 @@ if __name__ == '__main__':
     # # run pca
     # data.eigenvalues()
 
-    comp_num = 2
+    comp_num = 3
     X_pca = data.do_pca(comp_num)
     print(np.shape(X_pca))
     # data.save_pca('pca_{}_world.sav'.format(comp_num))
     # print("Saved PCA!")
 
-    pickle.dump(X_pca, open('X_pca_webcam.sav', 'wb'))
+    pickle.dump(X_pca, open('X_pca_3_webcam.sav', 'wb'))
     pickle.dump(y, open('y_webcam.sav', 'wb'))
     print("Saved X_pca!")
 
