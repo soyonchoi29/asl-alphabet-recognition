@@ -21,19 +21,18 @@ if __name__ == '__main__':
     tracker = handTracker.HandTracker()
 
     num_pics = 20
-    letter = 'A'
+    letter = 'Z'
+    index = 11
 
     while True:
         success, image = cap.read()
         frame = cv2.flip(image, 1)
+        frame = tracker.find_hands(frame)
 
         cv2.imshow("Webcam (Press Space to Capture)", frame)
         k = cv2.waitKey(1)
 
-        index = 0
-
         if k % 256 == 32:
-            frame = tracker.find_hands(frame)
             tracker.draw_borders(frame)
 
             if index < 20 and tracker.results.multi_hand_landmarks:
@@ -42,7 +41,6 @@ if __name__ == '__main__':
                 # plt.imshow(cropped)
                 # plt.show()
 
-                index = 0
                 file_dir = 'C:/Users/soyon/Documents/Codes/ASL-Translator/webcam dataset/{}'.format(letter)
                 os.chdir(file_dir)
 
