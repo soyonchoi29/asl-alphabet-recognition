@@ -38,8 +38,8 @@ class Data:
         # print(folders)
 
         tracker = handTracker.HandTracker(max_hands=1)
-        file = open('collected_coordinates_ver2.csv', 'w')
-        writer = csv.writer(file)
+        # file = open('collected_coordinates_ver2.csv', 'w')
+        # writer = csv.writer(file)
 
         # separate folder for each letter
         for folder in folders:
@@ -71,11 +71,11 @@ class Data:
                     lmlist = tracker.find_positions(img)
                     # print(lmlist)
 
-                    for i in range(len(lmlist)):
-                        writer.writerow([image,
-                                         'finger_id = {}'.format(lmlist[i, 1]),
-                                         (lmlist[i, 2], lmlist[i, 3]),
-                                         'Class = {}'.format(index)])
+                    # for i in range(len(lmlist)):
+                    #     writer.writerow([image,
+                    #                      'finger_id = {}'.format(lmlist[i, 1]),
+                    #                      (lmlist[i, 2], lmlist[i, 3]),
+                    #                      'Class = {}'.format(index)])
 
                     xlist = np.array(lmlist[:, 2])
                     # print(xlist)
@@ -191,20 +191,24 @@ if __name__ == '__main__':
     comp_num = 2
     X_pca = data.do_pca(comp_num)
     print(np.shape(X_pca))
-    data.save_pca('pca_{}_world.sav'.format(comp_num))
-    print("Saved PCA!")
+    # data.save_pca('pca_{}_world.sav'.format(comp_num))
+    # print("Saved PCA!")
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=77)
-    print("Split data successfully")
+    pickle.dump(X_pca, open('X_pca_webcam.sav', 'wb'))
+    pickle.dump(y, open('y_webcam.sav', 'wb'))
+    print("Saved X_pca!")
 
-    model = SVM()
-    print("Fitting data to model...")
-    fitted_model = model.fit(X_train, y_train)
-    print("Done fitting!")
-    print("Best parameters: ", fitted_model.best_params_)
-
-    model.save_model('webcam_svm_no_pca.sav')
-    print("Saved model!")
-
-    y_pred = fitted_model.predict(X_test)
-    print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=77)
+    # print("Split data successfully")
+    #
+    # model = SVM()
+    # print("Fitting data to model...")
+    # fitted_model = model.fit(X_train, y_train)
+    # print("Done fitting!")
+    # print("Best parameters: ", fitted_model.best_params_)
+    #
+    # model.save_model('webcam_svm_no_pca.sav')
+    # print("Saved model!")
+    #
+    # y_pred = fitted_model.predict(X_test)
+    # print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
