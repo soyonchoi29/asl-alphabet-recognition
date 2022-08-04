@@ -21,9 +21,6 @@ if __name__ == '__main__':
     # [red, blue]
     colors = ['#de3838', '#007bc3']
 
-    fig = plt.figure()
-    ax = fig.add_subplot(projection='3d')
-
     # plot kaggle data (#pc = 2)
     for l, m in zip(np.unique(y_kaggle), markers):
         plt.scatter(X_pca_kaggle[y_kaggle == l, 0], X_pca_kaggle[y_kaggle == l, 1],
