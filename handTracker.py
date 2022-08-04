@@ -122,11 +122,13 @@ class HandTracker:
     def slice_hand_imgs(self, img, index):
 
         cropped = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        cropped = cropped[(self.centers[index, 1] - 120):(self.centers[index, 1] + 120),
-                          (self.centers[index, 0] - 120):(self.centers[index, 0] + 120)]
+        cropped = cropped[(self.centers[index, 1] - 100):(self.centers[index, 1] + 100),
+                          (self.centers[index, 0] - 100):(self.centers[index, 0] + 100)]
 
-        if np.shape(cropped)[0] >= 64 and np.shape(cropped)[1] >= 64:
-            cropped = resize(cropped, (64, 64))
+        if np.shape(cropped)[0] >= 200 and np.shape(cropped)[1] >= 200:
+
+            cropped = resize(cropped, (200, 200))
+
             # cropped = rgb2gray(cropped)
             # cropped /= 255
             #

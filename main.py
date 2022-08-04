@@ -29,9 +29,6 @@ if __name__ == '__main__':
         success, image = cap.read()
         frame = cv2.flip(image, 1)
 
-        if not success:
-            break
-
         frame = tracker.find_hands(frame)
         tracker.draw_borders(frame)
 
