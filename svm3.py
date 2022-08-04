@@ -17,7 +17,7 @@ import csv
 import handTracker
 
 
-imgdir = 'C:/Users/soyon/Documents/Codes/ASL-Translator/dataset/train'
+imgdir = 'C:/Users/soyon/Documents/Codes/ASL-Translator/webcam dataset'
 letters = sorted(os.listdir(imgdir))
 
 
@@ -38,7 +38,7 @@ class Data:
         # print(folders)
 
         tracker = handTracker.HandTracker(max_hands=1)
-        file = open('collected_coordinates.csv', 'w')
+        file = open('collected_coordinates_ver2.csv', 'w')
         writer = csv.writer(file)
 
         # separate folder for each letter
@@ -57,9 +57,15 @@ class Data:
                 # elif imgind >= 1600:
                 #     break
 
-                img = imread(datadir + '/' + folder + '/' + image)
+                img = cv2.imread(datadir + '/' + folder + '/' + image)
                 # img = imread('C:/Users/soyon/Documents/Codes/ASL-Translator/dataset/train/A/A1303.jpg')
+
+                # plt.imshow(img)
+                # plt.show()
+
+                # print(np.shape(img))
                 tracker.find_hands(img)
+                # print("Found hand!")
 
                 if tracker.results.multi_hand_landmarks:
                     lmlist = tracker.find_positions(img)
@@ -85,10 +91,6 @@ class Data:
                     # print(xylist)
                     # print(len(xylist))
 
-                    # img = resize(img, (64, 64))
-                    # img = rgb2gray(img)
-                    # img /= 255
-                    # self.X.append(img.flatten())
                     self.X.append(xylist)
                     self.y.append(index)
                     images.append('{}'.format(image))
@@ -151,21 +153,21 @@ class SVM:
 
     def fit(self, dataset, target):
 
-        # param_grid = {'C': [0.1, 1, 10, 100],
-        #               'gamma': [0.0001, 0.001, 0.01, 0.1, 1],
-        #               'kernel': ['rbf', 'poly']}
-        #
-        # grid = GridSearchCV(self.model, param_grid)
-        # grid.fit(dataset, target)
-        #
-        # self.model = grid
-        # return self.model
+        param_grid = {'C': [0.1, 1, 10, 100],
+                      'gamma': [0.0001, 0.001, 0.01, 0.1, 1],
+                      'kernel': ['rbf', 'poly']}
 
-        svc = svm.SVC(C=100, gamma=1, kernel='rbf', probability=True)
-        fit = svc.fit(dataset, target)
-        self.model = fit
+        grid = GridSearchCV(self.model, param_grid)
+        grid.fit(dataset, target)
 
+        self.model = grid
         return self.model
+
+        # svc = svm.SVC(C=100, gamma=1, kernel='rbf', probability=True)
+        # fit = svc.fit(dataset, target)
+        # self.model = fit
+        #
+        # return self.model
 
     def save_model(self, path):
         pickle.dump(self.model, open(path, 'wb'))
@@ -183,15 +185,14 @@ if __name__ == '__main__':
     X, y = data.load_data(imgdir)
     print("Done loading data!")
 
-    # run pca
+    # # run pca
     # data.eigenvalues()
 
     comp_num = 2
     X_pca = data.do_pca(comp_num)
     print(np.shape(X_pca))
     data.save_pca('pca_{}_world.sav'.format(comp_num))
-
-    pickle.dump(X_pca, open('X_pca_kaggle', 'wb'))
+    print("Saved PCA!")
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=77)
     print("Split data successfully")
@@ -200,9 +201,10 @@ if __name__ == '__main__':
     print("Fitting data to model...")
     fitted_model = model.fit(X_train, y_train)
     print("Done fitting!")
-    # print("Best parameters: ", fitted_model.best_params_)
+    print("Best parameters: ", fitted_model.best_params_)
 
-    # model.save_model('svm_model_no_pca_world_grid.sav')
+    model.save_model('webcam_svm_no_pca.sav')
+    print("Saved model!")
 
     y_pred = fitted_model.predict(X_test)
     print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
