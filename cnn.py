@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import cv2
 
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Conv2D, MaxPool2D, Flatten
@@ -8,6 +9,8 @@ from skimage.transform import resize
 from skimage.io import imread
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+
+import pickle
 
 
 # decided not to utilize!
@@ -31,7 +34,8 @@ def load_data(datadir):
         for image in os.listdir(datadir + '/' + folder):
 
             img = imread(datadir + '/' + folder + '/' + image)
-            img = resize(img, (64, 64, 3))
+            img = resize(img, (64, 64))
+            img /= 225
 
             images.append(img.flatten())
             target.append(index)
@@ -43,16 +47,11 @@ def load_data(datadir):
     images /= 255  # normalize data just in case?
 
     target = np.array(target)
-    print("Shape before one-hot encoding: ", target.shape)
-    target_one_hot = to_categorical(target, len(folders))
-    print("Shape after one-hot encoding: ", target_one_hot.shape)
 
-    return images, target, target_one_hot
+    return images, target
 
 
 class CNN:
-
-    model = None
 
     def __init__(self, model_type):
         self.model = model_type
@@ -86,26 +85,54 @@ class CNN:
         return self.model
 
     def predict(self, classes, img):
-        class_pred = self.model.predict(img)
-        return classes[np.argmax(class_pred)], class_pred
+        img = cv2.resize(img, (64, 64))
+        img = np.array(img)
+        img /= 255.0
+        pred = self.model.predict(img)
+        return classes[np.argmax(pred)], pred
+
+    def save_model(self, path):
+        pickle.dump(self.model, open(path, 'wb'))
+
+    def load_model(self, path):
+        loaded_model = pickle.load(open(path, 'rb'))
+        self.model = loaded_model
+
+        return self.model
 
 
 if __name__ == '__main__':
 
-    X, y_labels, y = load_data(imgdir)
+    X, y = load_data(imgdir)
     print("Done loading data!")
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=77)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    y_train_hot = to_categorical(y_train, num_classes=30)
+    y_test_hot = to_categorical(y_test, num_classes=30)
+
+    from sklearn.utils import shuffle
+
+    X_train, y_trainHot = shuffle(X_train, y_train, random_state=13)
+    X_test, y_testHot = shuffle(X_test, y_test, random_state=13)
+    X_train = X_train[:30000]
+    X_test = X_test[:30000]
+    y_trainHot = y_trainHot[:30000]
+    y_testHot = y_testHot[:30000]
 
     # create the model
     model = CNN(Sequential())
-    model = CNN.create_model(model)
+    model = model.create_model()
+
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     # train the model
-    model.fit()
+    model.fit(X_train, y_train)
+
+    model.save_model('cnn_model.sav')
 
     # predict using the model
-    label_pred, y_pred = model.predict(y_labels, Sequential, X_test)
+    label_pred, y_pred = model.predict(letters, X_test)
     print("Done predicting!")
 
     print("Accuracy: ", accuracy_score(y_pred, y_test)*100)
