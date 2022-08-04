@@ -4,7 +4,8 @@ from skimage.io import imread
 from skimage.transform import resize
 from skimage.color import rgb2gray
 
-from sklearn import svm, decomposition
+from sklearn import decomposition
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -146,28 +147,28 @@ class Data:
         return self.pca
 
 
-class SVM:
+class KNN:
 
     def __init__(self):
-        self.model = svm.SVC(probability=True)
+        self.model = KNeighborsClassifier(n_neighbors=3)
 
     def fit(self, dataset, target):
 
-        param_grid = {'C': [0.1, 1, 10, 100],
-                      'gamma': [0.0001, 0.001, 0.01, 0.1, 1],
-                      'kernel': ['rbf', 'poly']}
-
-        grid = GridSearchCV(self.model, param_grid)
-        grid.fit(dataset, target)
-
-        self.model = grid
-        return self.model
-
-        # svc = svm.SVC(C=100, gamma=1, kernel='rbf', probability=True)
-        # fit = svc.fit(dataset, target)
-        # self.model = fit
+        # param_grid = {'C': [0.1, 1, 10, 100],
+        #               'gamma': [0.0001, 0.001, 0.01, 0.1, 1],
+        #               'kernel': ['rbf', 'poly']}
         #
+        # grid = GridSearchCV(self.model, param_grid)
+        # grid.fit(dataset, target)
+        #
+        # self.model = grid
         # return self.model
+
+        knn = KNeighborsClassifier(n_neighbors=3)
+        fit = knn.fit(dataset, target)
+        self.model = fit
+
+        return self.model
 
     def save_model(self, path):
         pickle.dump(self.model, open(path, 'wb'))
@@ -185,30 +186,28 @@ if __name__ == '__main__':
     X, y = data.load_data(imgdir)
     print("Done loading data!")
 
-    # # run pca
+    # run pca
     # data.eigenvalues()
 
     # comp_num = 3
     # X_pca = data.do_pca(comp_num)
     # print(np.shape(X_pca))
     # data.save_pca('pca_{}_world.sav'.format(comp_num))
-    # print("Saved PCA!")
 
-    # pickle.dump(X_pca, open('X_pca_3_webcam.sav', 'wb'))
-    # pickle.dump(y, open('y_webcam.sav', 'wb'))
+    # pickle.dump(X_pca, open('X_pca_3_kaggle.sav', 'wb'))
+    # pickle.dump(y, open('y_kaggle.sav', 'wb'))
     # print("Saved X_pca!")
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=77)
     print("Split data successfully")
 
-    model = SVM()
+    model = KNN()
     print("Fitting data to model...")
     fitted_model = model.fit(X_train, y_train)
     print("Done fitting!")
-    print("Best parameters: ", fitted_model.best_params_)
+    # print("Best parameters: ", fitted_model.best_params_)
 
-    model.save_model('webcam_svm_no_pca.sav')
-    print("Saved model!")
+    model.save_model('webcam_knn_model_no_pca.sav')
 
     y_pred = fitted_model.predict(X_test)
     print("Accuracy: ", accuracy_score(y_pred, y_test)*100)

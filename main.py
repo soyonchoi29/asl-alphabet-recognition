@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     model = svm2.SVM()
     pca = svm2.Data()
-    loaded_model = model.load_model('svm_model_no_pca_world_grid.sav')
+    loaded_model = model.load_model('webcam_knn_model_no_pca.sav')
     # loaded_pca = pca.load_pca('pca_6.sav')
 
     while True:
@@ -71,7 +71,7 @@ if __name__ == '__main__':
                 probability = max(probability) * 100
                 print('confidence:', probability)
 
-                if probability >= 60:
+                if probability >= 25:
                     tracker.display_letters(frame, i, predicted_letter, round(probability, 2))
 
         cv2.imshow("Signed English Translator", frame)
