@@ -1,5 +1,7 @@
+import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import skimage
 from skimage.io import imread
 from skimage.transform import resize
 from skimage.color import rgb2gray
@@ -8,6 +10,7 @@ from sklearn import svm, decomposition
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.preprocessing import StandardScaler
+from tensorflow.python.keras.utils.np_utils import to_categorical
 
 import pickle
 import os
@@ -26,38 +29,107 @@ class Data:
         self.X_pca = []
 
     def load_data(self, datadir):
-        index = 0
 
         folders = sorted(os.listdir(datadir))
         self.labels = folders
         # print(folders)
 
-        # separate folder for each letter
+        batch_size = 64
+        image_size = 64
+        target_dims = (image_size, image_size, 3)
+        num_classes = 29
+
+        train_len = 87000
+
+        dataset = np.empty((train_len, image_size, image_size, 3), dtype=np.float32)
+        target = np.empty((train_len,), dtype=np.int)
+        cnt = 0
         for folder in folders:
 
-            print("Loading images from folder ", folder, " has started.")
-            imgind = 0
+            print("Loading images from folder", folder, "has started.")
 
-            for image in os.listdir(datadir + '/' + folder):
+            if not folder.startswith('.'):
+                if folder in ['A']:
+                    label = 0
+                elif folder in ['B']:
+                    label = 1
+                elif folder in ['C']:
+                    label = 2
+                elif folder in ['D']:
+                    label = 3
+                elif folder in ['E']:
+                    label = 4
+                elif folder in ['F']:
+                    label = 5
+                elif folder in ['G']:
+                    label = 6
+                elif folder in ['H']:
+                    label = 7
+                elif folder in ['I']:
+                    label = 8
+                elif folder in ['J']:
+                    label = 9
+                elif folder in ['K']:
+                    label = 10
+                elif folder in ['L']:
+                    label = 11
+                elif folder in ['M']:
+                    label = 12
+                elif folder in ['N']:
+                    label = 13
+                elif folder in ['O']:
+                    label = 14
+                elif folder in ['P']:
+                    label = 15
+                elif folder in ['Q']:
+                    label = 16
+                elif folder in ['R']:
+                    label = 17
+                elif folder in ['S']:
+                    label = 18
+                elif folder in ['T']:
+                    label = 19
+                elif folder in ['U']:
+                    label = 20
+                elif folder in ['V']:
+                    label = 21
+                elif folder in ['W']:
+                    label = 22
+                elif folder in ['X']:
+                    label = 23
+                elif folder in ['Y']:
+                    label = 24
+                elif folder in ['Z']:
+                    label = 25
+                elif folder in ['del']:
+                    label = 26
+                elif folder in ['nothing']:
+                    label = 27
+                elif folder in ['space']:
+                    label = 28
+                else:
+                    label = 29
 
-                if (imgind > 200):
-                    break
+                index = -1
+                for image in os.listdir(datadir + '/' + folder):
 
-                img = imread(datadir + '/' + folder + '/' + image)
-                img = resize(img, (64, 64))
-                img = rgb2gray(img)
-                img /= 255
-                self.X.append(img.flatten())
-                self.y.append(index)
+                    if index > 200:
+                        break
+                    else:
+                        index += 1
 
-                imgind += 1
+                    img_file = cv2.imread(datadir + '/' + folder + '/' + image)
+                    if img_file is not None:
+                        img_file = skimage.transform.resize(img_file, (image_size, image_size, 3))
+                        img_arr = np.asarray(img_file).reshape((-1, image_size, image_size, 3))
 
-            index += 1
+                        dataset[cnt] = img_arr
+                        target[cnt] = label
+                        cnt += 1
 
-        self.X = np.array(self.X)
-        self.y = np.array(self.y)
-
-        return self.X, self.y
+            self.X = dataset
+            self.y = target
+            return self.X, self.y
 
     def get_label(self, index):
         return self.labels[index]
@@ -139,7 +211,7 @@ class SVM:
 if __name__ == '__main__':
 
     data = Data()
-    X, y = data.load_data(imgdir)
+    data, y = data.load_data(imgdir)
     print("Done loading data!")
 
     # run pca
@@ -156,7 +228,7 @@ if __name__ == '__main__':
     ax = axes.ravel()
 
     for i in range(10):
-        to_show = X[i].reshape(64, 64)
+        to_show = data[i].reshape(64, 64)
         ax[i].imshow(to_show, cmap='gray')
     for i in range(10):
         to_show = X_pca[i].reshape(64, 64)

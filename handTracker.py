@@ -127,7 +127,7 @@ class HandTracker:
 
         if np.shape(cropped)[0] >= 200 and np.shape(cropped)[1] >= 200:
 
-            cropped = resize(cropped, (200, 200))
+            cropped = resize(cropped, (200, 200, 3))
 
             # cropped = rgb2gray(cropped)
             # cropped /= 255
