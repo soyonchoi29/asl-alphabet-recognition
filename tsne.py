@@ -79,7 +79,7 @@ if __name__ == '__main__':
     X_tsne = tsne.fit_transform(X)
     # self.X_pca = self.pca.inverse_transform(self.X_pca)
 
-    pickle.dump(X_tsne, open('X_tsne_kaggle_img', 'wb'))
+    pickle.dump(X_tsne, open('X_tsne_kaggle_img.sav', 'wb'))
     pickle.dump(y, open('y_tsne_kaggle_img.sav', 'wb'))
     print("Saved X_tsne for Kaggle dataset!")
 

@@ -24,7 +24,7 @@ def load_data(datadir):
     folders = sorted(os.listdir(datadir))
     X = []
     y = []
-    labels = folders
+    images = []
     # print(folders)
 
     tracker = handTracker.HandTracker(max_hands=1)
@@ -39,7 +39,7 @@ def load_data(datadir):
 
         for image in os.listdir(datadir + '/' + folder):
             # imgind += 1
-            # # print(imgind)
+            # print(imgind)
             #
             # if imgind <= 1300:
             #     continue
@@ -86,8 +86,8 @@ def load_data(datadir):
             #     # print(xylist)
             #     # print(len(xylist))
             #
-            #     self.X.append(xylist)
-            #     self.y.append(index)
+            #     X.append(xylist)
+            #     y.append(index)
             #     images.append('{}'.format(image))
 
         index += 1
@@ -114,8 +114,8 @@ if __name__ == '__main__':
     X_tsne = tsne.fit_transform(X)
     # self.X_pca = self.pca.inverse_transform(self.X_pca)
 
-    pickle.dump(X_tsne, open('X_tsne_webcam_img', 'wb'))
-    pickle.dump(y, open('y_tsne_webcam_img.sav', 'wb'))
+    pickle.dump(X_tsne, open('X_tsne_webcam_img.sav', 'wb'))
+    pickle.dump(y, open('y_tsne_webcam.sav', 'wb'))
     print("Saved X_tsne for webcam dataset!")
 
 
