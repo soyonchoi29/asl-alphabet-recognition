@@ -29,7 +29,7 @@ def load_data(datadir):
     labels = folders
     # print(folders)
 
-    # tracker = handTracker.HandTracker(max_hands=1)
+    tracker = handTracker.HandTracker(max_hands=1)
     # file = open('collected_coordinates.csv', 'w')
     # writer = csv.writer(file)
 
@@ -50,12 +50,42 @@ def load_data(datadir):
                 break
 
             img = imread(datadir + '/' + folder + '/' + image)
-            img = resize(img, (64, 64))
-            img = rgb2gray(img)
-            img /= 255
+            tracker.find_hands(img)
 
-            X.append(img.flatten())
-            y.append(index)
+            if tracker.results.multi_hand_landmarks:
+                lmlist = tracker.find_positions(img)
+                # print(lmlist)
+
+                # for i in range(len(lmlist)):
+                #     writer.writerow([image,
+                #                      'finger_id = {}'.format(lmlist[i, 1]),
+                #                      (lmlist[i, 2], lmlist[i, 3]),
+                #                      'Class = {}'.format(index)])
+
+                xlist = np.array(lmlist[:, 2])
+                # print(xlist)
+                ylist = np.array(lmlist[:, 3])
+                # print(ylist)
+
+                xylist = []
+                for cx in xlist:
+                    xylist.append(cx)
+                for cy in ylist:
+                    xylist.append(cy)
+
+                # print(xylist)
+                # print(len(xylist))
+
+                # img = resize(img, (64, 64))
+                # img = rgb2gray(img)
+                # img /= 255
+                # self.X.append(img.flatten())
+                X.append(xylist)
+                y.append(index)
+                images.append('{}'.format(image))
+
+            # X.append(img.flatten())
+            # y.append(index)
 
         index += 1
 
@@ -79,8 +109,8 @@ if __name__ == '__main__':
     X_tsne = tsne.fit_transform(X)
     # self.X_pca = self.pca.inverse_transform(self.X_pca)
 
-    pickle.dump(X_tsne, open('X_tsne_kaggle_img.sav', 'wb'))
-    pickle.dump(y, open('y_tsne_kaggle_img.sav', 'wb'))
+    pickle.dump(X_tsne, open('X_tsne_kaggle.sav', 'wb'))
+    pickle.dump(y, open('y_tsne_kaggle.sav', 'wb'))
     print("Saved X_tsne for Kaggle dataset!")
 
 

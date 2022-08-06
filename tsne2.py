@@ -47,48 +47,48 @@ def load_data(datadir):
             #     break
 
             img = cv2.imread(datadir + '/' + folder + '/' + image)
-            img = resize(img, (64, 64))
-            img = rgb2gray(img)
-            img /= 255
+            # img = resize(img, (64, 64))
+            # img = rgb2gray(img)
+            # img /= 255
 
-            X.append(img.flatten())
-            y.append(index)
+            # X.append(img.flatten())
+            # y.append(index)
             # img = imread('C:/Users/soyon/Documents/Codes/ASL-Translator/dataset/train/A/A1303.jpg')
 
             # plt.imshow(img)
             # plt.show()
 
-            # print(np.shape(img))
-            # tracker.find_hands(img)
-            # # print("Found hand!")
-            #
-            # if tracker.results.multi_hand_landmarks:
-            #     lmlist = tracker.find_positions(img)
-            #     # print(lmlist)
-            #
-            #     # for i in range(len(lmlist)):
-            #     #     writer.writerow([image,
-            #     #                      'finger_id = {}'.format(lmlist[i, 1]),
-            #     #                      (lmlist[i, 2], lmlist[i, 3]),
-            #     #                      'Class = {}'.format(index)])
-            #
-            #     xlist = np.array(lmlist[:, 2])
-            #     # print(xlist)
-            #     ylist = np.array(lmlist[:, 3])
-            #     # print(ylist)
-            #
-            #     xylist = []
-            #     for cx in xlist:
-            #         xylist.append(cx)
-            #     for cy in ylist:
-            #         xylist.append(cy)
-            #
-            #     # print(xylist)
-            #     # print(len(xylist))
-            #
-            #     X.append(xylist)
-            #     y.append(index)
-            #     images.append('{}'.format(image))
+            print(np.shape(img))
+            tracker.find_hands(img)
+            # print("Found hand!")
+
+            if tracker.results.multi_hand_landmarks:
+                lmlist = tracker.find_positions(img)
+                # print(lmlist)
+
+                # for i in range(len(lmlist)):
+                #     writer.writerow([image,
+                #                      'finger_id = {}'.format(lmlist[i, 1]),
+                #                      (lmlist[i, 2], lmlist[i, 3]),
+                #                      'Class = {}'.format(index)])
+
+                xlist = np.array(lmlist[:, 2])
+                # print(xlist)
+                ylist = np.array(lmlist[:, 3])
+                # print(ylist)
+
+                xylist = []
+                for cx in xlist:
+                    xylist.append(cx)
+                for cy in ylist:
+                    xylist.append(cy)
+
+                # print(xylist)
+                # print(len(xylist))
+
+                X.append(xylist)
+                y.append(index)
+                images.append('{}'.format(image))
 
         index += 1
 
@@ -114,7 +114,7 @@ if __name__ == '__main__':
     X_tsne = tsne.fit_transform(X)
     # self.X_pca = self.pca.inverse_transform(self.X_pca)
 
-    pickle.dump(X_tsne, open('X_tsne_webcam_img.sav', 'wb'))
+    pickle.dump(X_tsne, open('X_tsne_webcam.sav', 'wb'))
     pickle.dump(y, open('y_tsne_webcam.sav', 'wb'))
     print("Saved X_tsne for webcam dataset!")
 
