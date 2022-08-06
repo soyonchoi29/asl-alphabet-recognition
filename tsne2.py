@@ -110,9 +110,8 @@ if __name__ == '__main__':
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
 
-    tsne = TSNE()
+    tsne = TSNE(n_components=2)
     X_tsne = tsne.fit_transform(X)
-    # self.X_pca = self.pca.inverse_transform(self.X_pca)
 
     pickle.dump(X_tsne, open('X_tsne_webcam.sav', 'wb'))
     pickle.dump(y, open('y_tsne_webcam.sav', 'wb'))

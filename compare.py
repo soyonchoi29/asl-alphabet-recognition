@@ -5,11 +5,11 @@ import os
 
 if __name__ == '__main__':
 
-    X_pca_kaggle = pickle.load(open('X_pca_2_kaggle_img_grayscale.sav', 'rb'))
-    y_kaggle = pickle.load(open('y_kaggle_img_grayscale.sav', 'rb'))
+    X_pca_kaggle = pickle.load(open('X_tsne_kaggle.sav', 'rb'))
+    y_kaggle = pickle.load(open('y_tsne_kaggle.sav', 'rb'))
 
-    X_pca_webcam = pickle.load(open('X_pca_2_webcam_img_grayscale.sav', 'rb'))
-    y_webcam = pickle.load(open('y_webcam_img_grayscale.sav', 'rb'))
+    X_pca_webcam = pickle.load(open('X_tsne_webcam.sav', 'rb'))
+    y_webcam = pickle.load(open('y_tsne_webcam.sav', 'rb'))
 
     imgdir = 'C:/Users/soyon/Documents/Codes/ASL-Translator/dataset/train'
     letters = sorted(os.listdir(imgdir))
