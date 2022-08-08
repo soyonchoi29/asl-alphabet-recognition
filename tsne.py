@@ -29,7 +29,7 @@ def load_data(datadir):
     # labels = folders
     # print(folders)
 
-    # tracker = handTracker.HandTracker(max_hands=1)
+    tracker = handTracker.HandTracker(max_hands=1)
     # file = open('collected_coordinates.csv', 'w')
     # writer = csv.writer(file)
 
@@ -50,41 +50,41 @@ def load_data(datadir):
                 break
 
             img = imread(datadir + '/' + folder + '/' + image)
-            # tracker.find_hands(img)
-            #
-            # if tracker.results.multi_hand_landmarks:
-            #     lmlist = tracker.find_positions(img)
-            #     # print(lmlist)
-            #
-            #     # for i in range(len(lmlist)):
-            #     #     writer.writerow([image,
-            #     #                      'finger_id = {}'.format(lmlist[i, 1]),
-            #     #                      (lmlist[i, 2], lmlist[i, 3]),
-            #     #                      'Class = {}'.format(index)])
-            #
-            #     xlist = np.array(lmlist[:, 2])
-            #     # print(xlist)
-            #     ylist = np.array(lmlist[:, 3])
-            #     # print(ylist)
-            #
-            #     xylist = []
-            #     for cx in xlist:
-            #         xylist.append(cx)
-            #     for cy in ylist:
-            #         xylist.append(cy)
-            #
-            #     # print(xylist)
-            #     # print(len(xylist))
+            tracker.find_hands(img)
 
-            img = resize(img, (64, 64))
-            img = rgb2gray(img)
-            img /= 255
+            if tracker.results.multi_hand_landmarks:
+                lmlist = tracker.find_positions(img)
+                # print(lmlist)
 
-            # X.append(xylist)
+                # for i in range(len(lmlist)):
+                #     writer.writerow([image,
+                #                      'finger_id = {}'.format(lmlist[i, 1]),
+                #                      (lmlist[i, 2], lmlist[i, 3]),
+                #                      'Class = {}'.format(index)])
+
+                xlist = np.array(lmlist[:, 2])
+                # print(xlist)
+                ylist = np.array(lmlist[:, 3])
+                # print(ylist)
+
+                xylist = []
+                for cx in xlist:
+                    xylist.append(cx)
+                for cy in ylist:
+                    xylist.append(cy)
+
+                # print(xylist)
+                # print(len(xylist))
+
+                X.append(xylist)
+                y.append(index)
+
+            # img = resize(img, (64, 64))
+            # img = rgb2gray(img)
+            # img /= 255
+
+            # X.append(img.flatten())
             # y.append(index)
-
-            X.append(img.flatten())
-            y.append(index)
 
         index += 1
 
@@ -108,8 +108,8 @@ if __name__ == '__main__':
     tsne = TSNE(n_components=2)
     X_tsne = tsne.fit_transform(X)
 
-    pickle.dump(X_tsne, open('X_tsne_kaggle_img.sav', 'wb'))
-    pickle.dump(y, open('y_tsne_kaggle_img.sav', 'wb'))
+    pickle.dump(X_tsne, open('X_tsne_kaggle.sav', 'wb'))
+    pickle.dump(y, open('y_tsne_kaggle.sav', 'wb'))
     print("Saved X_tsne for Kaggle dataset!")
 
 
