@@ -129,6 +129,7 @@ class Data:
 
             self.X = dataset
             self.y = target
+            self.y = to_categorical(self.y, len(num_classes))
             return self.X, self.y
 
     def get_label(self, index):

@@ -8,6 +8,7 @@ from sklearn import svm, decomposition
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.preprocessing import StandardScaler
+from tensorflow.python.keras.utils.np_utils import to_categorical
 
 import cv2
 import pickle
@@ -107,6 +108,7 @@ class Data:
         # print(np.shape(self.X))
         self.y = np.array(self.y)
         # print(np.shape(self.y))
+        self.y = to_categorical(self.y, len(folders))
 
         return self.X, self.y
 

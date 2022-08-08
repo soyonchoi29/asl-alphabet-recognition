@@ -9,6 +9,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.manifold import TSNE
+from tensorflow.python.keras.utils.np_utils import to_categorical
 
 import cv2
 import pickle
@@ -89,6 +90,7 @@ def load_data(datadir):
 
     X = np.array(X)
     y = np.array(y)
+    y = to_categorical(y, len(folders))
 
     return X, y
 
