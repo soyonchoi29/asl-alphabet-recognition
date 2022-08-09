@@ -65,9 +65,11 @@ if __name__ == '__main__':
     #                X_pca_webcam[y_webcam == l, 2],
     #                c=colors[1], marker=m, label=l)
 
-    plt.title('PCA on hand landmarks')
-    plt.xlabel('Comp 1')
-    plt.ylabel('Comp 2')
+    plt.title('PCA on hand landmarks', fontsize=24)
+    plt.xlabel('Comp 1', fontsize=20)
+    plt.xticks(fontsize=18)
+    plt.ylabel('Comp 2', fontsize=20)
+    plt.yticks(fontsize=18)
     # ax.set_xlabel('PC 1')
     # ax.set_ylabel('PC 2')
     # ax.set_zlabel('PC 3')
