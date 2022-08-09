@@ -59,46 +59,42 @@ class Data:
                     break
 
                 img = imread(datadir + '/' + folder + '/' + image)
-                # img = resize(img, (64, 64))
-                # img = rgb2gray(img)
-                # img /= 255
-                #
-                # self.X.append(img.flatten())
-                # self.y.append(index)
+                img = resize(img, (64, 64))
+                img = rgb2gray(img)
+                img /= 255
+
+                self.X.append(img.flatten())
+                self.y.append(index)
 
                 # img = imread('C:/Users/soyon/Documents/Codes/ASL-Translator/dataset/train/A/A1303.jpg')
-                tracker.find_hands(img)
-
-                if tracker.results.multi_hand_landmarks:
-                    lmlist = tracker.find_positions(img)
-                    # print(lmlist)
-
-                    # for i in range(len(lmlist)):
-                    #     writer.writerow([image,
-                    #                      'finger_id = {}'.format(lmlist[i, 1]),
-                    #                      (lmlist[i, 2], lmlist[i, 3]),
-                    #                      'Class = {}'.format(index)])
-
-                    xlist = np.array(lmlist[:, 2])
-                    # print(xlist)
-                    ylist = np.array(lmlist[:, 3])
-                    # print(ylist)
-
-                    xylist = []
-                    for cx in xlist:
-                        xylist.append(cx)
-                    for cy in ylist:
-                        xylist.append(cy)
+                # tracker.find_hands(img)
+                #
+                # if tracker.results.multi_hand_landmarks:
+                #     lmlist = tracker.find_positions(img)
+                #     # print(lmlist)
+                #
+                #     # for i in range(len(lmlist)):
+                #     #     writer.writerow([image,
+                #     #                      'finger_id = {}'.format(lmlist[i, 1]),
+                #     #                      (lmlist[i, 2], lmlist[i, 3]),
+                #     #                      'Class = {}'.format(index)])
+                #
+                #     xlist = np.array(lmlist[:, 2])
+                #     # print(xlist)
+                #     ylist = np.array(lmlist[:, 3])
+                #     # print(ylist)
+                #
+                #     xylist = []
+                #     for cx in xlist:
+                #         xylist.append(cx)
+                #     for cy in ylist:
+                #         xylist.append(cy)
 
                     # print(xylist)
                     # print(len(xylist))
 
-                    # img = resize(img, (64, 64))
-                    # img = rgb2gray(img)
-                    # img /= 255
-                    # self.X.append(img.flatten())
-                    self.X.append(xylist)
-                    self.y.append(index)
+                    # self.X.append(xylist)
+                    # self.y.append(index)
                 #     images.append('{}'.format(image))
 
             index += 1
@@ -106,7 +102,7 @@ class Data:
         self.X = np.array(self.X)
         # print(np.shape(self.X))
         self.y = np.array(self.y)
-        self.y = to_categorical(self.y, len(folders))
+        # self.y = to_categorical(self.y, len(folders))
         # print(np.shape(self.y))
 
         return self.X, self.y
@@ -200,8 +196,8 @@ if __name__ == '__main__':
     print(np.shape(X_pca))
     # data.save_pca('pca_{}_world.sav'.format(comp_num))
 
-    pickle.dump(X_pca, open('X_pca_kaggle.sav', 'wb'))
-    pickle.dump(y, open('y_kaggle.sav', 'wb'))
+    pickle.dump(X_pca, open('X_pca_2_kaggle_img_grayscale.sav', 'wb'))
+    pickle.dump(y, open('y_kaggle_img_grayscale.sav', 'wb'))
     print("Saved X_pca!")
 
     # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=77)
