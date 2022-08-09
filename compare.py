@@ -40,15 +40,15 @@ if __name__ == '__main__':
     colors = ['#de3838', '#007bc3']
 
     # plot kaggle data (#pc = 2)
-    for l, m in zip(np.unique(y_pca_kaggle), markers):
-        plt.scatter(X_pca_kaggle[y_pca_kaggle == l, 0],
-                    X_pca_kaggle[y_pca_kaggle == l, 1],
+    for l, m in zip(np.unique(y_tsne_kaggle_img), markers):
+        plt.scatter(X_tsne_kaggle_img[y_tsne_kaggle_img == l, 0],
+                    X_tsne_kaggle_img[y_tsne_kaggle_img == l, 1],
                     c=colors[0], marker=m, label=l)
 
     # plot webcam data on same plot
-    for l, m in zip(np.unique(y_pca_webcam), markers):
-        plt.scatter(X_pca_webcam[y_pca_webcam == l, 0],
-                    X_pca_webcam[y_pca_webcam == l, 1],
+    for l, m in zip(np.unique(y_tsne_webcam_img), markers):
+        plt.scatter(X_tsne_webcam_img[y_tsne_webcam_img == l, 0],
+                    X_tsne_webcam_img[y_tsne_webcam_img == l, 1],
                     c=colors[1], marker=m, label=l)
 
     # # plot kaggle data (#pc = 3)
@@ -65,11 +65,11 @@ if __name__ == '__main__':
     #                X_pca_webcam[y_webcam == l, 2],
     #                c=colors[1], marker=m, label=l)
 
-    plt.title('PCA on hand landmarks', fontsize=24)
-    plt.xlabel('Comp 1', fontsize=20)
-    plt.xticks(fontsize=18)
-    plt.ylabel('Comp 2', fontsize=20)
-    plt.yticks(fontsize=18)
+    plt.title('t-SNE on images (Grayscale, 64x64)', fontsize=28)
+    plt.xlabel('Comp 1', fontsize=24)
+    plt.xticks(fontsize=20)
+    plt.ylabel('Comp 2', fontsize=24)
+    plt.yticks(fontsize=20)
     # ax.set_xlabel('PC 1')
     # ax.set_ylabel('PC 2')
     # ax.set_zlabel('PC 3')
