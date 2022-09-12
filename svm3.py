@@ -203,8 +203,8 @@ if __name__ == '__main__':
     # data.save_pca('pca_{}_world.sav'.format(comp_num))
     # print("Saved PCA!")
 
-    pickle.dump(X_pca, open('X_pca_kaggle_to_webcam.sav', 'wb'))
-    pickle.dump(y, open('y_pca_kaggle_to_webcam.sav', 'wb'))
+    pickle.dump(X_pca, open('saved models/X_pca_kaggle_to_webcam.sav', 'wb'))
+    pickle.dump(y, open('saved models/y_pca_kaggle_to_webcam.sav', 'wb'))
     print("Saved X_pca!")
 
     # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=77)

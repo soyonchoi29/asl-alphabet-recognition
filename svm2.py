@@ -196,8 +196,8 @@ if __name__ == '__main__':
     print(np.shape(X_pca))
     # data.save_pca('pca_{}_world.sav'.format(comp_num))
 
-    pickle.dump(X_pca, open('X_pca_kaggle.sav', 'wb'))
-    pickle.dump(y, open('y_kaggle.sav', 'wb'))
+    pickle.dump(X_pca, open('saved models/X_pca_kaggle.sav', 'wb'))
+    pickle.dump(y, open('saved models/y_kaggle.sav', 'wb'))
     print("Saved X_pca!")
 
     # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=77)

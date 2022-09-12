@@ -115,8 +115,8 @@ if __name__ == '__main__':
     tsne = TSNE(n_components=2)
     X_tsne = tsne.fit_transform(X)
 
-    pickle.dump(X_tsne, open('X_tsne_webcam.sav', 'wb'))
-    pickle.dump(y, open('y_tsne_webcam.sav', 'wb'))
+    pickle.dump(X_tsne, open('saved models/X_tsne_webcam.sav', 'wb'))
+    pickle.dump(y, open('saved models/y_tsne_webcam.sav', 'wb'))
     print("Saved X_tsne for webcam dataset!")
 
 
