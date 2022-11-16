@@ -4,4 +4,4 @@ This program was written for the purpose of teaching the machine to recognize th
 
 To run the program, run the main.py file and sign to the webcam. The program should identify the ASL letter being held up by the user, albeit not 100% accurately.
 
-This project was conducted for the Summer Undergraduate Research Fellowship program at Amherst College. More information about the research done on this topic can be found on the poster [here](https://docs.google.com/presentation/d/1wI8KXGUvWXBA-xkj9gM9eK53F58ALkPZmD-PW0Q8XYE/edit?usp=sharing).
+This project was conducted for the Summer Undergraduate Research Fellowship program at Amherst College, under Professor Scott P. Alfeld. More information about the research done on this topic can be found on the poster [here](https://docs.google.com/presentation/d/1wI8KXGUvWXBA-xkj9gM9eK53F58ALkPZmD-PW0Q8XYE/edit?usp=sharing).
